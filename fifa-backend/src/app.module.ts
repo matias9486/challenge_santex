@@ -3,6 +3,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { PlayerModule } from './player/player.module';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -20,10 +22,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_DATABASENAME'),
-        entities: [],
+        //entities: [],
+        autoLoadEntities: true, //Permite que cada entidad que definas en tus módulos (ej. users.entity.ts) se registre automáticamente sin tener que listarlas manualmente aquí
         synchronize: true,
       }),
     }),
+    PlayerModule,
+    SeedModule,
   ],
   controllers: [AppController],
   providers: [AppService],
