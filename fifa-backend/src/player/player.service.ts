@@ -53,8 +53,21 @@ export class PlayerService {
     return `This action returns all player`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} player`;
+  async findOne(id: number) {
+    let player: Player | null = null;
+    try {
+      player = await this.playerRepository.findOneBy({
+        id: id,
+      });
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
+
+    if (!player) throw new NotFoundException(`Player with id ${id} not found`);
+
+    return plainToInstance(ResponsePlayerDto, player, {
+      excludeExtraneousValues: true,
+    });
   }
 
   async update(id: number, updatePlayerDto: UpdatePlayerDto) {
