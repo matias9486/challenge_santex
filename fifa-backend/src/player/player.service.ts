@@ -13,6 +13,11 @@ import { Player } from './entities/player.entity';
 import { QueryFailedError, Repository } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
 import { ResponsePlayerDto } from './dto/response-player.dto';
+import { FilterPlayerDto } from './dto/filter-player.dto';
+import {
+  PaginatedPlayersDto,
+  PaginationMetaDto,
+} from './dto/paginated-player.dto';
 
 @Injectable()
 export class PlayerService {
@@ -49,8 +54,56 @@ export class PlayerService {
     }
   }
 
-  findAll() {
-    return `This action returns all player`;
+  async findAll(filterDto: FilterPlayerDto) {
+    const { page = 1, limit = 10, name, club, position } = filterDto;
+    const skip = (page - 1) * limit;
+
+    const queryBuilder = this.playerRepository.createQueryBuilder('player');
+
+    // Filtros dinámicos
+    if (name) {
+      queryBuilder.andWhere('player.long_name LIKE :name', {
+        name: `%${name}%`,
+      });
+    }
+
+    if (club) {
+      queryBuilder.andWhere('player.club_name LIKE :club', {
+        club: `%${club}%`,
+      });
+    }
+
+    if (position) {
+      queryBuilder.andWhere('player.player_positions LIKE :pos', {
+        pos: `%${position}%`,
+      });
+    }
+
+    queryBuilder.skip(skip).take(limit);
+
+    let items: Player[] = [];
+    let total: number = 0;
+    try {
+      [items, total] = await queryBuilder.getManyAndCount();
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
+
+    const mappedPlayers: ResponsePlayerDto[] = items.map((item) =>
+      plainToInstance(ResponsePlayerDto, item, {
+        excludeExtraneousValues: true,
+      }),
+    );
+
+    const meta: PaginationMetaDto = {
+      totalItems: total,
+      itemCount: items.length,
+      itemsPerPage: limit,
+      totalPages: Math.ceil(total / limit),
+      currentPage: page,
+    };
+
+    return new PaginatedPlayersDto(mappedPlayers, meta);
   }
 
   async findOne(id: number) {

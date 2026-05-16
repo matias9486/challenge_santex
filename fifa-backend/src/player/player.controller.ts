@@ -7,10 +7,12 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { PlayerService } from './player.service';
 import { CreatePlayerDto } from './dto/create-player.dto';
 import { UpdatePlayerDto } from './dto/update-player.dto';
+import { FilterPlayerDto } from './dto/filter-player.dto';
 
 @Controller('players')
 export class PlayerController {
@@ -22,8 +24,8 @@ export class PlayerController {
   }
 
   @Get()
-  findAll() {
-    return this.playerService.findAll();
+  findAll(@Query() filterPlayerDto: FilterPlayerDto) {
+    return this.playerService.findAll(filterPlayerDto);
   }
 
   @Get(':id')
