@@ -4,12 +4,15 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreatePlayerDto } from './dto/create-player.dto';
 import { UpdatePlayerDto } from './dto/update-player.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Player } from './entities/player.entity';
 import { QueryFailedError, Repository } from 'typeorm';
+import { plainToInstance } from 'class-transformer';
+import { ResponsePlayerDto } from './dto/response-player.dto';
 
 @Injectable()
 export class PlayerService {
@@ -36,8 +39,11 @@ export class PlayerService {
 
   async create(createPlayerDto: CreatePlayerDto) {
     try {
-      const player = this.playerRepository.create(createPlayerDto);
-      await this.playerRepository.save(player);
+      let player: Player = this.playerRepository.create(createPlayerDto);
+      player = await this.playerRepository.save(player);
+      return plainToInstance(ResponsePlayerDto, player, {
+        excludeExtraneousValues: true,
+      });
     } catch (error) {
       this.handleDBExceptions(error);
     }
@@ -51,12 +57,37 @@ export class PlayerService {
     return `This action returns a #${id} player`;
   }
 
-  update(id: number, updatePlayerDto: UpdatePlayerDto) {
-    return `This action updates a #${id} player`;
-  }
+  async update(id: number, updatePlayerDto: UpdatePlayerDto) {
+    // Verificamos si el objeto tiene llaves. Al ser opcionales podria enviar nada
+    //omito los lanzamientos de excepciones del try para que no sean capturadas por el bloque de bd
+    if (Object.keys(updatePlayerDto).length === 0) {
+      throw new BadRequestException(
+        'You must provide at least one field to update',
+      );
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} player`;
+    let player: Player | undefined;
+
+    try {
+      player = await this.playerRepository.preload({
+        id: id,
+        ...updatePlayerDto,
+      });
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
+
+    if (!player) throw new NotFoundException(`Player with id ${id} not found`);
+
+    try {
+      player = await this.playerRepository.save(player);
+      // Mapea automáticamente la entidad al DTO de respuesta de forma masiva
+      return plainToInstance(ResponsePlayerDto, player, {
+        excludeExtraneousValues: true,
+      });
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
   }
 
   private handleDBExceptions(error: any) {
@@ -95,8 +126,6 @@ export class PlayerService {
     }
 
     // Si es un error desconocido, lanzamos un 500 estándar
-    throw new InternalServerErrorException(
-      'Unexpected error saving player. Check the logs.',
-    );
+    throw new InternalServerErrorException('Unexpected error. Check the logs.');
   }
 }

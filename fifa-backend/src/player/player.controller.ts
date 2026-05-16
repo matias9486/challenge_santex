@@ -38,9 +38,4 @@ export class PlayerController {
   ) {
     return this.playerService.update(id, updatePlayerDto);
   }
-
-  @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.playerService.remove(id);
-  }
 }
