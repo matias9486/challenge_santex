@@ -10,7 +10,7 @@ import { CreatePlayerDto } from './dto/create-player.dto';
 import { UpdatePlayerDto } from './dto/update-player.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Player } from './entities/player.entity';
-import { QueryFailedError, Repository } from 'typeorm';
+import { QueryFailedError, Repository, SelectQueryBuilder } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
 import { ResponsePlayerDto } from './dto/response-player.dto';
 import { FilterPlayerDto } from './dto/filter-player.dto';
@@ -18,6 +18,7 @@ import {
   PaginatedPlayersDto,
   PaginationMetaDto,
 } from './dto/paginated-player.dto';
+import { Workbook } from 'exceljs';
 
 @Injectable()
 export class PlayerService {
@@ -55,29 +56,11 @@ export class PlayerService {
   }
 
   async findAll(filterDto: FilterPlayerDto) {
-    const { page = 1, limit = 10, name, club, position } = filterDto;
+    const { page = 1, limit = 10 } = filterDto;
     const skip = (page - 1) * limit;
 
-    const queryBuilder = this.playerRepository.createQueryBuilder('player');
-
-    // Filtros dinámicos
-    if (name) {
-      queryBuilder.andWhere('player.long_name LIKE :name', {
-        name: `%${name}%`,
-      });
-    }
-
-    if (club) {
-      queryBuilder.andWhere('player.club_name LIKE :club', {
-        club: `%${club}%`,
-      });
-    }
-
-    if (position) {
-      queryBuilder.andWhere('player.player_positions LIKE :pos', {
-        pos: `%${position}%`,
-      });
-    }
+    //filtro dinamico
+    const queryBuilder = this.getFilteredPlayersQuery(filterDto);
 
     queryBuilder.skip(skip).take(limit);
 
@@ -104,6 +87,58 @@ export class PlayerService {
     };
 
     return new PaginatedPlayersDto(mappedPlayers, meta);
+  }
+
+  //Método para convertir lista de jugadores a csv
+  async getCsvBuffer(filterDto: FilterPlayerDto) {
+    //filtro dinámico
+    const queryBuilder = this.getFilteredPlayersQuery(filterDto);
+    //jugadores filtrados
+    let players;
+    try {
+      players = await queryBuilder.getMany();
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
+
+    const workbook = new Workbook();
+    const worksheet = workbook.addWorksheet('Jugadores');
+
+    // Definimos las columnas para que el CSV sea legible
+    worksheet.columns = [
+      { header: 'Id', key: 'id', width: 10 },
+
+      { header: 'Jugador Id Fifa', key: 'playerId', width: 10 },
+      { header: 'Version Fifa', key: 'fifaVersion', width: 10 },
+
+      { header: 'Nacionalidad', key: 'nationalityName', width: 25 },
+      { header: 'Nombre Corto', key: 'shortName', width: 15 },
+      { header: 'Nombre Completo', key: 'longName', width: 35 },
+      { header: 'Fecha Nacimiento', key: 'birthDate', width: 10 },
+
+      { header: 'Pie Dominante', key: 'preferredFoot', width: 10 },
+      { header: 'Imagen Url', key: 'playerFaceUrl', width: 20 },
+      { header: 'Posiciones', key: 'playerPositions', width: 35 },
+      { header: 'Valor Euros', key: 'valueEur', width: 20 },
+
+      { header: 'Club', key: 'clubName', width: 25 },
+
+      { header: 'Media', key: 'overall', width: 10 },
+      { header: 'Potencial', key: 'potential', width: 15 },
+      { header: 'Ritmo', key: 'pace', width: 15 },
+      { header: 'Tiro', key: 'shooting', width: 15 },
+      { header: 'Pase', key: 'passing', width: 15 },
+      { header: 'Regate', key: 'dribbling', width: 15 },
+      { header: 'Defensa', key: 'defending', width: 15 },
+      { header: 'Físico', key: 'physic', width: 15 },
+    ];
+
+    // Añadimos los datos
+    worksheet.addRows(players);
+
+    // Escribimos a un buffer (formato CSV)
+    const buffer = await workbook.csv.writeBuffer();
+    return buffer as unknown as Buffer;
   }
 
   async findOne(id: number) {
@@ -193,5 +228,36 @@ export class PlayerService {
 
     // Si es un error desconocido, lanzamos un 500 estándar
     throw new InternalServerErrorException('Unexpected error. Check the logs.');
+  }
+
+  //Método para generar el filtro dinámico
+  private getFilteredPlayersQuery(
+    filterDto: FilterPlayerDto,
+  ): SelectQueryBuilder<Player> {
+    const { name, club, position } = filterDto;
+
+    const queryBuilder: SelectQueryBuilder<Player> =
+      this.playerRepository.createQueryBuilder('player');
+
+    // Filtros dinámicos
+    if (name) {
+      queryBuilder.andWhere('player.long_name LIKE :name', {
+        name: `%${name}%`,
+      });
+    }
+
+    if (club) {
+      queryBuilder.andWhere('player.club_name LIKE :club', {
+        club: `%${club}%`,
+      });
+    }
+
+    if (position) {
+      queryBuilder.andWhere('player.player_positions LIKE :pos', {
+        pos: `%${position}%`,
+      });
+    }
+
+    return queryBuilder;
   }
 }
