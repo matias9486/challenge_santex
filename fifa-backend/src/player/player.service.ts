@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ConflictException,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -199,7 +198,7 @@ export class PlayerService {
 
       // 1. Error de llave duplicada (Si añades índices únicos) (1062)
       if (dbError.code === 'ER_DUP_ENTRY') {
-        throw new ConflictException(
+        throw new BadRequestException(
           'The player already exists for this version of FIFA.',
         );
       }
