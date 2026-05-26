@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PlayerModule } from './player/player.module';
 import { SeedModule } from './seed/seed.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -25,12 +24,14 @@ import { SeedModule } from './seed/seed.module';
         //entities: [],
         autoLoadEntities: true, //Permite que cada entidad que definas en tus módulos (ej. users.entity.ts) se registre automáticamente sin tener que listarlas manualmente aquí
         synchronize: true,
+        dropSchema: true, // <-- Esto borrará TODO y lo volverá a crear limpiamente en cada restart
       }),
     }),
     PlayerModule,
     SeedModule,
+    AuthModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
