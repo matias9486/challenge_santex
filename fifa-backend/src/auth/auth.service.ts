@@ -8,6 +8,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { QueryFailedError, Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -20,8 +21,16 @@ export class AuthService {
 
   async create(createUserDto: CreateUserDto) {
     try {
-      const user = this.userRepository.create(createUserDto);
+      //desestructuró dto para obtener el password por separado
+      const { password, ...userData } = createUserDto;
+
+      const user = this.userRepository.create({
+        //creo el objeto que espera el repository con el pass encriptado
+        ...userData,
+        password: bcrypt.hashSync(password, 10),
+      });
       await this.userRepository.save(user);
+      //todo retornar jwt
       return user;
     } catch (error) {
       this.handleDBExceptions(error);
