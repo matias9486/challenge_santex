@@ -53,7 +53,14 @@ export class AuthService {
     const { password, email } = loginUserDto;
     const user = await this.userRepository.findOne({
       where: { email }, //filtro
-      select: { email: true, password: true, id: true, fullName: true }, //campos a traer
+      select: {
+        email: true,
+        password: true,
+        id: true,
+        fullName: true,
+        isActived: true,
+        roles: true,
+      }, //campos a traer
     });
 
     if (!user) {
@@ -90,9 +97,7 @@ export class AuthService {
 
       // 1. Error de llave duplicada (Si añades índices únicos) (1062)
       if (dbError.code === 'ER_DUP_ENTRY') {
-        throw new BadRequestException(
-          'Email is already registered',
-        );
+        throw new BadRequestException('Email is already registered');
       }
 
       // 2. Error de dato demasiado largo (Truncation) (1406)
