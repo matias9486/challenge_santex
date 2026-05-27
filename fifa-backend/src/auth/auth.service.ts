@@ -10,6 +10,9 @@ import { User } from './entities/user.entity';
 import { QueryFailedError, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto, LoginUserDto } from './dto';
+import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
+import { AuthenticatedUserDto } from './dto/authenticated-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -18,6 +21,8 @@ export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
+    private readonly jwtService: JwtService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -31,8 +36,14 @@ export class AuthService {
         password: bcrypt.hashSync(password, 10),
       });
       await this.userRepository.save(user);
-      //todo retornar jwt
-      return user;
+
+      const authenticatedUser: AuthenticatedUserDto = {
+        id: user.id,
+        fullName: user.fullName,
+        roles: user.roles,
+        token: this.getJwtToken({ id: user.id }),
+      };
+      return authenticatedUser;
     } catch (error) {
       this.handleDBExceptions(error);
     }
@@ -42,19 +53,33 @@ export class AuthService {
     const { password, email } = loginUserDto;
     const user = await this.userRepository.findOne({
       where: { email }, //filtro
-      select: { email: true, password: true }, //campos a traer
+      select: { email: true, password: true, id: true, fullName: true }, //campos a traer
     });
 
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    if (!user.isActived)
+      throw new UnauthorizedException('User is inactive, talk with an admin');
+
     //compara passwords con métodos de bcrypt
     if (!bcrypt.compareSync(password, user.password)) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    return user;
+    const authenticatedUser: AuthenticatedUserDto = {
+      id: user.id,
+      fullName: user.fullName,
+      roles: user.roles,
+      token: this.getJwtToken({ id: user.id }),
+    };
+    return authenticatedUser;
+  }
+
+  private getJwtToken(payload: JwtPayload) {
+    const token = this.jwtService.sign(payload);
+    return token;
   }
 
   private handleDBExceptions(error: any) {
