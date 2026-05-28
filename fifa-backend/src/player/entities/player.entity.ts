@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { User } from '../../auth/entities/user.entity';
 
 @Entity()
 export class Player {
@@ -95,4 +96,8 @@ export class Player {
     nullable: false,
   })
   nationalityName!: string;
+
+  //Relaciones
+  @ManyToOne(() => User, (user) => user.player, { eager: true })
+  user!: User;
 }

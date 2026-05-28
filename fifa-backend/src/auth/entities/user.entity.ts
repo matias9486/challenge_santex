@@ -1,4 +1,12 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Player } from 'src/player/entities/player.entity';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('users')
 export class User {
@@ -42,6 +50,10 @@ export class User {
     nullable: false,
   })
   roles: string[] = ['user'];
+
+  //Relaciones
+  @OneToMany(() => Player, (player) => player.user)
+  player!: Player[];
 
   //Métodos para poner en minúsculas y sin espacios el email al crear y editar
   @BeforeInsert()
