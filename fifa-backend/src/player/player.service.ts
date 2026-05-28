@@ -195,6 +195,16 @@ export class PlayerService {
     }
   }
 
+  async deleteAllPlayers() {
+    const query = this.playerRepository.createQueryBuilder('player');
+
+    try {
+      return await query.delete().where({}).execute();
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
+  }
+
   private handleDBExceptions(error: any) {
     this.logger.error(error); //uso de logs
     // Validamos si es un error lanzado directamente por la base de datos
