@@ -84,9 +84,47 @@ export class AuthService {
     return authenticatedUser;
   }
 
+  // Revalida la sesión del usuario, refresca el token JWT y actualiza sus datos de perfil.
+  checkStatus(user: User) {
+    const authenticatedUser: AuthenticatedUserDto = {
+      id: user.id,
+      fullName: user.fullName,
+      roles: user.roles,
+      token: this.getJwtToken({ id: user.id }),
+    };
+    return authenticatedUser;
+  }
+
   private getJwtToken(payload: JwtPayload) {
     const token = this.jwtService.sign(payload);
     return token;
+  }
+
+  async deleteAllUsers() {
+    const query = this.userRepository.createQueryBuilder('user');
+
+    try {
+      return await query.delete().execute();
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
+  }
+
+  async createUserSeed(createUserDto: CreateUserDto) {
+    try {
+      //desestructuro dto para obtener el password por separado
+      const { password, ...userData } = createUserDto;
+
+      const user = this.userRepository.create({
+        //creo el objeto que espera el repository con el pass encriptado
+        ...userData,
+        password: bcrypt.hashSync(password, 10),
+      });
+
+      return await this.userRepository.save(user);
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
   }
 
   private handleDBExceptions(error: any) {
