@@ -1,13 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { join } from 'path';
+import { AuthService } from 'src/auth/auth.service';
+import { User } from 'src/auth/entities/user.entity';
 import { Player } from 'src/player/entities/player.entity';
 import { PlayerService } from 'src/player/player.service';
 
 @Injectable()
 export class SeedService {
-  constructor(private readonly playerService: PlayerService) {}
+  constructor(private readonly playerService: PlayerService, private readonly userService: AuthService) {}
 
   async executeSeed() {
+    await this.deleteAllTables();
+    const userDB = await this.insertUsers();
+
     const csv = require('csv-parser');
     const fs = require('fs');
 
@@ -25,7 +30,7 @@ export class SeedService {
 
     return new Promise((resolve, reject) => {
       stream.on('data', async (row) => {
-        batch.push(this.mapCsvToDto(row));
+        batch.push(this.mapCsvToDto(row, userDB));
 
         if (batch.length >= BATCH_SIZE) {
           stream.pause(); // Pausamos la lectura del archivo
@@ -45,18 +50,19 @@ export class SeedService {
       });
 
       stream.on('end', async () => {
-        // Insertamos el remanente (lo que no llegÃ³ a 1000)
+        // Insertamos el remanente (lo que no llegó a 1000)
         if (batch.length > 0) {
           await this.playerService.createMany(batch);
+          console.log(`Insertados ${batch.length} registros...`);
         }
-        resolve({ message: 'Seed finalizado con Ã©xito' });
+        resolve({ message: 'Seed finalizado con éxito' });
       });
 
       stream.on('error', (err) => reject(err));
     });
   }
 
-  private mapCsvToDto(row: any): Partial<Player> {
+  private mapCsvToDto(row: any, user: User | undefined): Partial<Player> {
     // 1. Clonamos todas las propiedades que coinciden (short_name, age, etc.)
     const player: Partial<Player> = Object.assign({}, row);
 
@@ -89,6 +95,22 @@ export class SeedService {
 
     player.clubName = row.club_name ?? 'Unknown';
     player.nationalityName = row.nationality_name ?? 'Unknown';
+
+    player.user = user;
     return player;
+  }
+
+  private async deleteAllTables() {
+    await this.playerService.deleteAllPlayers();
+    await this.userService.deleteAllUsers();
+  }
+
+  async insertUsers() {
+    const user = {
+      'fullName': 'Matias Alancay',
+      'email': 'matias@gmail.com',
+      'password': 'Matias1234',
+    };
+    return await this.userService.createUserSeed(user);
   }
 }
