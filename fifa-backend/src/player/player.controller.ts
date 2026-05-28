@@ -14,7 +14,8 @@ import { CreatePlayerDto } from './dto/create-player.dto';
 import { UpdatePlayerDto } from './dto/update-player.dto';
 import { FilterPlayerDto } from './dto/filter-player.dto';
 import * as express from 'express';
-import { Auth } from 'src/auth/decorators';
+import { Auth, GetUser } from 'src/auth/decorators';
+import { User } from 'src/auth/entities/user.entity';
 
 @Controller('players')
 @Auth() //cualquier acceso al controlador debe autenticarse
@@ -22,8 +23,11 @@ export class PlayerController {
   constructor(private readonly playerService: PlayerService) {}
 
   @Post()
-  create(@Body() createPlayerDto: CreatePlayerDto) {
-    return this.playerService.create(createPlayerDto);
+  create(
+    @Body() createPlayerDto: CreatePlayerDto,
+    @GetUser() user: User
+  ) {
+    return this.playerService.create(createPlayerDto, user);
   }
 
   @Get()
@@ -63,7 +67,8 @@ export class PlayerController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updatePlayerDto: UpdatePlayerDto,
+    @GetUser() user: User,
   ) {
-    return this.playerService.update(id, updatePlayerDto);
+    return this.playerService.update(id, updatePlayerDto, user);
   }
 }

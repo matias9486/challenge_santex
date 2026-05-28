@@ -18,6 +18,7 @@ import {
   PaginationMetaDto,
 } from './dto/paginated-player.dto';
 import { Workbook } from 'exceljs';
+import { User } from 'src/auth/entities/user.entity';
 
 @Injectable()
 export class PlayerService {
@@ -42,9 +43,12 @@ export class PlayerService {
     }
   }
 
-  async create(createPlayerDto: CreatePlayerDto) {
+  async create(createPlayerDto: CreatePlayerDto, user: User) {
     try {
-      let player: Player = this.playerRepository.create(createPlayerDto);
+      let player: Player = this.playerRepository.create({
+        ...createPlayerDto,
+        user: user,
+      });
       player = await this.playerRepository.save(player);
       return plainToInstance(ResponsePlayerDto, player, {
         excludeExtraneousValues: true,
@@ -157,7 +161,7 @@ export class PlayerService {
     });
   }
 
-  async update(id: number, updatePlayerDto: UpdatePlayerDto) {
+  async update(id: number, updatePlayerDto: UpdatePlayerDto, user: User) {
     // Verificamos si el objeto tiene llaves. Al ser opcionales podria enviar nada
     //omito los lanzamientos de excepciones del try para que no sean capturadas por el bloque de bd
     if (Object.keys(updatePlayerDto).length === 0) {
@@ -180,6 +184,7 @@ export class PlayerService {
     if (!player) throw new NotFoundException(`Player with id ${id} not found`);
 
     try {
+      player.user = user;
       player = await this.playerRepository.save(player);
       // Mapea automáticamente la entidad al DTO de respuesta de forma masiva
       return plainToInstance(ResponsePlayerDto, player, {
