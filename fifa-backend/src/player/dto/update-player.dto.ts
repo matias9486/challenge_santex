@@ -1,6 +1,9 @@
-import { OmitType, PartialType } from '@nestjs/mapped-types';
+//import { OmitType, PartialType } from '@nestjs/mapped-types';
+
+import { ApiSchema, OmitType, PartialType } from '@nestjs/swagger'; //Para documentar DTO que extienden de Partial o usan OmitType, debo importar desde swagger
 import { CreatePlayerDto } from './create-player.dto';
 
+@ApiSchema({ name: 'UpdatePlayerRequest' })
 export class UpdatePlayerDto extends PartialType(
   // OmitType: Toma el CreatePlayerDto original y remueve por completo las propiedades especificadas.
   // Esto previene que dichos campos sean procesados dentro de la envoltura de PartialType.
