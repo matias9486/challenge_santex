@@ -1,0 +1,17 @@
+export enum PlayerPositions {
+  GK = 'GK',
+  CB = 'CB',
+  LB = 'LB',
+  RB = 'RB',
+  LWB = 'LWB',
+  RWB = 'RWB',
+  CDM = 'CDM',
+  CM = 'CM',
+  CAM = 'CAM',
+  LM = 'LM',
+  RM = 'RM',
+  ST = 'ST',
+  CF = 'CF',
+  LW = 'LW',
+  RW = 'RW',
+}
