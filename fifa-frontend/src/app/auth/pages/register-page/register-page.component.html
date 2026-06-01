@@ -1,1 +1,49 @@
-<p>register-page works!</p>
+<div class="container">
+    <h1>Register User</h1>
+    <hr>
+            
+    <div class="d-flex justify-content-center align-items-center">        
+        <form class="col-7 row g-3" [formGroup]="registerForm" (ngSubmit)="onSubmit()">            
+            @if (backendResponseSignal()) { 
+                <app-alert [(message)]="backendResponseSignal"></app-alert>
+            } 
+            
+            <div class="col-md-7">
+                <label for="fullName" class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="fullName" placeholder="Matias Alancay" formControlName="fullName">
+                @if (formUtil.isNotValidField(registerForm, 'fullName')) {                    
+                    <span class="text-danger">{{formUtil.getFieldError(registerForm, 'fullName')}}</span>
+                }
+            </div>
+
+            <div class="col-md-7">
+                <label for="email" class="form-label">Email</label>
+                <input type="text" class="form-control" id="email" placeholder="email@example.com" formControlName="email">
+                @if (formUtil.isNotValidField(registerForm, 'email')) {                    
+                    <span class="text-danger">{{formUtil.getFieldError(registerForm, 'email')}}</span>
+                }
+            </div>
+
+            <div class="col-md-7">
+                <label for="password" class="form-label">Password</label>
+                <div class="input-group">
+                    <input [type]="showPassword() ? 'text' : 'password'" class="form-control" id="password" placeholder="Password123" formControlName="password">
+                    <button class="btn btn-dark" type="button" (click)="togglePassword()">
+                        @if (showPassword()) {
+                            <i class="bi bi-eye-slash"></i>
+                        } @else {
+                            <i class="bi bi-eye"></i>
+                        }
+                    </button>
+                </div>
+                @if (formUtil.isNotValidField(registerForm, 'password')) {                    
+                    <span class="text-danger">{{formUtil.getFieldError(registerForm, 'password')}}</span>
+                }
+            </div>
+
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary" [disabled]="isProcessing">{{isProcessing ? 'Processing...' : 'Save'}}</button>
+            </div>            
+        </form>  
+    </div>
+</div>
