@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { catchError, map, Observable, of, tap } from 'rxjs';
+import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { NO_TOKEN_REQUIRED } from '@core/context/auth.context';
 import { environment } from '@environments/environment.development';
@@ -78,7 +78,24 @@ export class AuthService {
     this._authStatus.set('not-authenticated');
     localStorage.removeItem('token');
   }
-  //registro
+    
+  register(email: string, password: string, fullName: string): Observable<boolean> {
+    return this.http.post<AuthResponse>(
+      `${baseUrl}/auth/register`, 
+      { email: email, password: password, fullName: fullName},       
+      NO_TOKEN_REQUIRED //helper propio que usamos en nuestro auth interceptor
+      )
+      .pipe(
+        map((resp) => {
+          this.handleAuthSuccess(resp);
+          return true; 
+        }),
+        catchError((error: any) => {
+          this.logout();
+          return throwError(() => error); // Relanza el HttpErrorResponse original
+        })
+      );
+  }
 
   //helpers
   private handleAuthSuccess( data: AuthResponse) {
