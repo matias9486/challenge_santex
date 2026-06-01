@@ -1,0 +1,19 @@
+<div [class]="'alert alert-dismissible fade show alert-' + message()?.type" role="alert">
+    <h5 class="alert-heading">{{ message()?.statusName }}</h5>
+    <!-- POR QUÉ 'message.set(null)':
+        Los 'model inputs' son mutables (se pueden modificar). Al hacer '.set(null)', este componente hijo limpia el mensaje. 
+        Gracias al Two-Way Data Binding, este cambio a 'null' se notificará automáticamente al componente padre. 
+    -->
+    <button type="button" (click)="message.set(null)" class="btn-close" data-bs-dismiss="alert"
+        aria-label="Close"></button>
+    <hr />
+    @if (Array.isArray(message()?.message)) {
+    <ul>
+        @for (msg of message()?.message; track $index) {
+        <li>{{ msg }}</li>
+        }
+    </ul>
+    } @else {
+    <p class="mb-0">{{ message()?.message }}</p>
+    }
+</div>
