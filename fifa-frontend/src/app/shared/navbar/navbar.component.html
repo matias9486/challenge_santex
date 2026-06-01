@@ -5,7 +5,11 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">        
+      
+
+      @let authstatus = authService.authStatus();
+      @if(authstatus === 'authenticated'){
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">        
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Players
@@ -21,20 +25,29 @@
           </ul>
         </li>
         
-      </ul>
-      <button class="btn btn-outline-info" type="button">Register</button>
-      <button class="btn btn-outline-info mx-2" type="button">Login</button>
-      <ul class="navbar-nav mb-2 mb-lg-0">        
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Nombre Usuario
-          </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item">Logout</a></li>
-          </ul>
-        </li>
-        
-      </ul>
+        </ul>
+
+        <ul class="navbar-nav mb-2 mb-lg-0">        
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              {{authService.user()?.fullName}}
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" (click)="authService.logout()">Logout</a></li>
+            </ul>
+          </li>
+          
+        </ul>
+      }
+      @else if(authstatus === 'not-authenticated'){
+      <div class="me-auto"></div>
+        <button class="btn btn-outline-info mx-2" type="button" routerLink="/auth/login" routerLinkOptions="{exact: true}">Login</button>
+        <button class="btn btn-outline-info" type="button" routerLink="/auth/register" routerLinkOptions="{exact: true}">Register</button>
+      }
+      @else {
+        <a class="btn btn-secondary">cargando....</a>
+      }
+      
     </div>
   </div>
 </nav>
