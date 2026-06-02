@@ -6,22 +6,20 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       
-
-      @let authstatus = authService.authStatus();
-      @if(authstatus === 'authenticated'){
+      @if(authStatus() === 'authenticated'){
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">        
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Players
           </a>
           <ul class="dropdown-menu">            
-            <li><a class="dropdown-item" >Create</a></li>
-            <li><a class="dropdown-item" >Edit</a></li>
-            <li><a class="dropdown-item" >Details</a></li>
-            <li><a class="dropdown-item" >List</a></li>
+            <li><a class="dropdown-item" routerLink="/players/new" routerLinkOptions="{exact: true}">Create</a></li>
+            <li><a class="dropdown-item" routerLink="/players/edit" routerLinkOptions="{exact: true}">Edit</a></li>
+            <li><a class="dropdown-item" routerLink="/players/details" routerLinkOptions="{exact: true}">Details</a></li>
+            <li><a class="dropdown-item" routerLink="/players" routerLinkOptions="{exact: true}">List</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" >Skill Evolution</a></li>
-            <li><a class="dropdown-item" >Evolution IA</a></li>
+            <li><a class="dropdown-item" disabled>Skill Evolution</a></li>
+            <li><a class="dropdown-item" disabled>Evolution IA</a></li>
           </ul>
         </li>
         
@@ -30,22 +28,22 @@
         <ul class="navbar-nav mb-2 mb-lg-0">        
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              {{authService.user()?.fullName}}
+              {{user()?.fullName}}
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" (click)="authService.logout()">Logout</a></li>
+              <li><a class="dropdown-item" (click)="logout()">Logout</a></li>
             </ul>
           </li>
           
         </ul>
       }
-      @else if(authstatus === 'not-authenticated'){
+      @else if(authStatus() === 'not-authenticated'){
       <div class="me-auto"></div>
         <button class="btn btn-outline-info mx-2" type="button" routerLink="/auth/login" routerLinkOptions="{exact: true}">Login</button>
         <button class="btn btn-outline-info" type="button" routerLink="/auth/register" routerLinkOptions="{exact: true}">Register</button>
       }
       @else {
-        <a class="btn btn-secondary">cargando....</a>
+        <a class="btn btn-secondary">Loagind....</a>
       }
       
     </div>
