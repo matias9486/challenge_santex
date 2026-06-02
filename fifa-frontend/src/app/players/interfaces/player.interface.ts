@@ -1,3 +1,5 @@
+import { PlayerPosition } from "@players/types/player-position.type";
+
 export interface Player {
     id?: number, // 1,
 
@@ -13,7 +15,7 @@ export interface Player {
     fifaVersion: number, //15,
     playerId: number, //158023,     //0 para nuevos. buscar ultimo id por fifaversion
     clubName: string, //"FC Barcelona",
-    playerPositions: string, //"CF",    
+    playerPositions: PlayerPosition, //"CF",    
     valueEur: number, //100500000,    
         
     //skilss
