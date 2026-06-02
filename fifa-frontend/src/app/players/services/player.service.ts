@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '@environments/environment.development';
-import { FilterPlayer, PaginatedPlayers } from '@players/interfaces';
+import { FilterPlayer, PaginatedPlayers, Player } from '@players/interfaces';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -27,5 +27,9 @@ export class PlayerService {
 
     // Pasamos los params en las opciones del GET
     return this.http.get<PaginatedPlayers>(`${this.baseUrl}/players`, { params });
+  }
+
+  getPlayerById(id:number): Observable<Player> {    
+    return this.http.get<Player>(`${this.baseUrl}/players/${id}`);      
   }
 }
