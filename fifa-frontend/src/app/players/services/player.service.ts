@@ -39,5 +39,20 @@ export class PlayerService {
 
   updatePlayer(id:number, player: Player): Observable<Player> {    
     return this.http.patch<Player>(`${this.baseUrl}/players/${id}`, player);
-  }    
+  }
+
+  downloadCsvPlayers(filters?: FilterPlayer) : Observable<Blob>{
+    let params = new HttpParams();
+
+    if (filters) {      
+      Object.entries(filters).forEach(([key, value]) => {        
+        if (value !== undefined && value !== null && value !== '') {
+          params = params.set(key, value.toString());
+        }
+      });
+    }
+
+    // Pasamos los params en las opciones del GET y agregamos responseType: 'blob'
+    return this.http.get(`${this.baseUrl}/players/download`, { params , responseType: 'blob' });
+  }
 }
