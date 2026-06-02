@@ -2,6 +2,9 @@ import { NgClass } from '@angular/common';
 import { Component, inject, Input, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+
+import { saveAs } from 'file-saver';
+
 import { FilterPlayer, PaginatedPlayers, Player } from '@players/interfaces';
 import { PlayerService } from '@players/services/player.service';
 import { AlertComponent, AlertData } from '@shared/alert/alert.component';
@@ -20,6 +23,7 @@ export class PlayerListPageComponent implements OnInit{
   isLoading = false;  //evita el reenderizado antes que termine petición
   backendResponseSignal = signal< AlertData | null>(null);
   players: Player[] = [];
+  isDownloading = false; //para deshabilitar botón de descarga
 
   //variables auxiliares para mostrar o no los filtros
   hasInitialPlayers: boolean = false; // Nueva variable para controlar el estado inicial
@@ -99,6 +103,38 @@ export class PlayerListPageComponent implements OnInit{
     this.loadPlayers();
   }
   
+  onDownload() {
+    this.isDownloading = true;
+    
+    // Obtiene el objeto con los valores actuales del formulario
+    const formValues = this.filterForm.value;
+
+    // Construimos el DTO asegurando que cumpla con la interfaz
+    const filters: FilterPlayer = {
+      name: formValues.name || undefined,
+      club: formValues.club || undefined,      
+      page: formValues.page || undefined,
+      limit: formValues.limit || undefined,
+    };    
+
+    this.playerService.downloadCsvPlayers(filters).subscribe({
+      next: (blob: Blob) => {
+        saveAs(blob, `players_${new Date().getTime()}.csv`);
+        this.isDownloading = false;
+      },
+      error: (err) => {                
+        let message: string | string [] = err.error.message || 'Error downloading file';
+        this.backendResponseSignal.set({
+          statusCode: err.error.statusCode,
+          message: message, 
+          statusName: err.error.error || 'An Error ocurred',
+          type: 'danger'                        
+        });    
+        this.isDownloading = false;
+      }
+    });
+  }
+
   changePage(page: number | string): void {
     // Si hacen clic en "...", no hacemos nada
     if (typeof page === 'string') return;

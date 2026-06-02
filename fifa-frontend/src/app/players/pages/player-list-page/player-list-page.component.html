@@ -32,6 +32,9 @@
                     <div class="col-auto">
                         <button type="button" class="btn bg-primary-subtle bg-gradient mb-3" (click)="onClearFilters()">Clean Filters</button>
                     </div>    
+                    <div class="col-auto">
+                        <button type="button" class="btn bg-success-subtle bg-gradient mb-3" (click)="onDownload()" [disabled]="isDownloading">{{isDownloading ? 'Downloading...' : 'Download CSV'}}</button>
+                    </div>    
                 </form>  
             </div>
 
