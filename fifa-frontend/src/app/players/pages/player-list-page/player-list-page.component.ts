@@ -21,6 +21,10 @@ export class PlayerListPageComponent implements OnInit{
   backendResponseSignal = signal< AlertData | null>(null);
   players: Player[] = [];
 
+  //variables auxiliares para mostrar o no los filtros
+  hasInitialPlayers: boolean = false; // Nueva variable para controlar el estado inicial
+  private isFirstLoad: boolean = true; // Auxiliar para saber si es la carga inicial
+
   private playerService: PlayerService = inject(PlayerService);
   private fb = inject(FormBuilder);
   
@@ -35,9 +39,7 @@ export class PlayerListPageComponent implements OnInit{
     limit: [10]
   });
 
-  ngOnInit(): void {
-    // Si necesitas hacer algo específico según el modo al cargar el componente
-    console.log('El componente de listado inició en modo:', this.mode);
+  ngOnInit(): void {    
     this.loadPlayers();        
   }
 
@@ -52,15 +54,19 @@ export class PlayerListPageComponent implements OnInit{
       club: formValues.club || undefined,      
       page: formValues.page || undefined,
       limit: formValues.limit || undefined,
-    };
-
-    console.log('Cargando jugadores con filtros:', filters);
+    };    
 
     this.playerService.getAllPlayers(filters).subscribe({
       next: (data) => {
         this.paginatedPlayers = data;
         this.players = data.data;        
         this.isLoading = false;
+
+        // Solo en la primera carga verificamos si existen jugadores en el sistema
+        if (this.isFirstLoad) {
+          this.hasInitialPlayers = this.players.length > 0;
+          this.isFirstLoad = false; // Ya no es la primera carga
+        }
       },
       error: (err) => {
         this.isLoading = false;
@@ -71,8 +77,7 @@ export class PlayerListPageComponent implements OnInit{
           message: message, 
           statusName: err.error.error, // El nombre del estado (ej. "Not Found", "Internal Server Error")
           type: 'danger'                        
-        });    
-        console.error('Error al cargar jugadores:', err)
+        });        
       }
     });
   }
@@ -80,6 +85,17 @@ export class PlayerListPageComponent implements OnInit{
   onFilter(): void {
     // Al filtrar, reseteamos a la página 1
     this.filterForm.patchValue({ page: 1 }, { emitEvent: false });
+    this.loadPlayers();
+  }
+
+  onClearFilters(): void {
+    // 1. Reseteamos el formulario a sus valores vacíos por defecto
+    this.filterForm.reset({
+      name: '',
+      club: '',
+      page: 1
+    }, { emitEvent: false }); // Evitamos disparar eventos innecesarios mientras se limpia
+
     this.loadPlayers();
   }
   
