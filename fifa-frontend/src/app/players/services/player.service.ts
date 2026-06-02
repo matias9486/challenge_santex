@@ -32,4 +32,12 @@ export class PlayerService {
   getPlayerById(id:number): Observable<Player> {    
     return this.http.get<Player>(`${this.baseUrl}/players/${id}`);      
   }
+
+  postHttpClient(player: Player): Observable<Player> {    
+    return this.http.post<Player>(`${this.baseUrl}/players`, player);
+  }
+
+  updatePlayer(id:number, player: Player): Observable<Player> {    
+    return this.http.patch<Player>(`${this.baseUrl}/players/${id}`, player);
+  }    
 }
