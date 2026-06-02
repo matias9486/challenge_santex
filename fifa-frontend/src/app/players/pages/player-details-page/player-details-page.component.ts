@@ -38,7 +38,7 @@ export class PlayerDetailsPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {    
-    this.obtenerPorId(this.id);
+    this.obtenerPorId(this.id());
   }
 
   ngOnDestroy(): void {
