@@ -4,8 +4,10 @@
         Los 'model inputs' son mutables (se pueden modificar). Al hacer '.set(null)', este componente hijo limpia el mensaje. 
         Gracias al Two-Way Data Binding, este cambio a 'null' se notificará automáticamente al componente padre. 
     -->
+    @if (dismissible()) {
     <button type="button" (click)="message.set(null)" class="btn-close" data-bs-dismiss="alert"
         aria-label="Close"></button>
+    }
     <hr />
     @if (Array.isArray(message()?.message)) {
     <ul>
