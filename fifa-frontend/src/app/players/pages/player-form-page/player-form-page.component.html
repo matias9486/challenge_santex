@@ -1,1 +1,148 @@
-<p>player-form-page works!</p>
+<div class="container">
+    <h2>{{title}}</h2>
+    <hr>
+
+    @if (isLoading) {
+        <app-spinner></app-spinner>
+    }
+    @else if(messaggeBackend()){
+        <app-alert [(message)]="messaggeBackend" [dismissible]="false"></app-alert>
+    }
+    @else {
+        <form class="container my-3" [formGroup]="playerForm" (ngSubmit)="onSubmit()">
+            <h4>Player Data:</h4>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="shortName" class="form-label">Short Name:</label>
+                    <input type="text" class="form-control" id="shortName" formControlName="shortName">
+                </div>
+                @if (formUtil.isNotValidField(playerForm, 'shortName')) {
+                    <span class="text-danger">{{formUtil.getFieldError(playerForm, 'shortName')}}</span>
+                }
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="longName" class="form-label">Long Name:</label>
+                    <input type="text" class="form-control" id="longName" formControlName="longName">
+                </div>
+                @if (formUtil.isNotValidField(playerForm, 'longName')) {
+                    <span class="text-danger">{{formUtil.getFieldError(playerForm, 'longName')}}</span>
+                }
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="birthDate" class="form-label">Birth Date:</label>
+                    <input type="date" class="form-control" id="birthDate" formControlName="birthDate">
+                </div>
+                @if (formUtil.isNotValidField(playerForm, 'birthDate')) {
+                    <span class="text-danger">{{formUtil.getFieldError(playerForm, 'birthDate')}}</span>
+                }
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="nationalityName" class="form-label">Nationality Name:</label>
+                    <input type="text" class="form-control" id="nationalityName" formControlName="nationalityName">
+                </div>
+                @if (formUtil.isNotValidField(playerForm, 'nationalityName')) {
+                    <span class="text-danger">{{formUtil.getFieldError(playerForm, 'nationalityName')}}</span>
+                }
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-12">
+                    <label for="fifaVersion" class="form-label">Preferred Foot:</label>
+                </div>
+                <div class="col-4">
+                    <select class="form-select" aria-label="select fifa version" id="preferredFoot" formControlName="preferredFoot">
+                        <option value="Left">Left</option>
+                        <option value="Right">Right</option>           
+                        <option value="Both">Both</option>           
+                    </select>
+                </div>        
+                @if (formUtil.isNotValidField(playerForm, 'preferredFoot')) {
+                    <span class="text-danger">{{formUtil.getFieldError(playerForm, 'preferredFoot')}}</span>
+                }
+            </div>
+
+            <h4>Fifa Data</h4>
+            <div class="row mb-3">
+                <div class="col-12">
+                    <label for="fifaVersion" class="form-label">Fifa Versión:</label>
+                </div>
+                <div class="col-4">
+                    <select class="form-select" aria-label="select fifa version" id="fifaVersion" formControlName="fifaVersion">
+                        <option value="23">Fifa 23</option>
+                        <option value="22">Fifa 22</option>
+                        <option value="21">Fifa 21</option>
+                        <option value="20">Fifa 20</option>
+                        <option value="19">Fifa 19</option>
+                        <option value="18">Fifa 18</option>
+                        <option value="17">Fifa 17</option>
+                        <option value="16">Fifa 16</option>
+                        <option value="15">Fifa 15</option>        
+                    </select>
+                </div>        
+                @if (formUtil.isNotValidField(playerForm, 'fifaVersion')) {
+                    <span class="text-danger">{{formUtil.getFieldError(playerForm, 'fifaVersion')}}</span>
+                }
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-12">
+                    <label for="playerPositions" class="form-label">Player Position:</label>
+                </div>
+                <div class="col-4">
+                    <select class="form-select" aria-label="select player position" id="playerPositions" formControlName="playerPositions">
+                        @for (pos of positions; track $index) {
+                            <option [value]="pos">{{pos}}</option>    
+                        }            
+                    </select>
+                </div>        
+                @if (formUtil.isNotValidField(playerForm, 'playerPositions')) {
+                    <span class="text-danger">{{formUtil.getFieldError(playerForm, 'playerPositions')}}</span>
+                }
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="clubName" class="form-label">Club:</label>
+                    <input type="text" class="form-control" id="clubName" formControlName="clubName">
+                </div>
+                @if (formUtil.isNotValidField(playerForm, 'clubName')) {
+                    <span class="text-danger">{{formUtil.getFieldError(playerForm, 'clubName')}}</span>
+                }
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="valueEur" class="form-label">Value Euro:</label>
+                    <input type="number" class="form-control" id="valueEur" formControlName="valueEur">
+                </div>
+                @if (formUtil.isNotValidField(playerForm, 'valueEur')) {
+                    <span class="text-danger">{{formUtil.getFieldError(playerForm, 'valueEur')}}</span>
+                }
+            </div>
+            
+            <h4>Skills</h4>  
+                @for (skill of skillFields; track skill) {
+                    <div class="row">
+                        <div class="d-inline-block col-12"><label [for]="skill" class="form-label">{{ skill | titlecase }}:</label></div>
+                        <div class="d-inline-block col-6"><input type="range" class="form-range" min="0" max="100" [id]="skill" [formControlName]="skill"></div>        
+                        <div class="d-inline-block col-auto"><span>({{ playerForm.value[skill] }})</span></div>
+                        @if (formUtil.isNotValidField(playerForm, skill)) {
+                            <span class="text-danger">{{formUtil.getFieldError(playerForm, skill)}}</span>
+                        }
+                    </div>          
+                }
+
+                @if (messaggeBackend()) { 
+                    <app-alert [(message)]="messaggeBackend" [dismissible]="true"></app-alert>        
+                } 
+            <button type="submit" class="btn btn-primary" [disabled]="isProcessing">{{isProcessing ? 'Processing...' : 'Save'}}</button>
+        </form>
+    }
+</div>
+
