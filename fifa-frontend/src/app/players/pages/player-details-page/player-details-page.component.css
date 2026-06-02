@@ -1,0 +1,14 @@
+.chart-container {
+  position: relative; /* Obligatorio para que Chart.js calcule bien */  
+  height: 400px;
+  width: 100%;        /* Para que ocupe todo el ancho disponible */  
+}
+
+.bg-grey {
+    background-color: rgb(213 220 227);
+}
+
+.img-size {
+  width: 120px;
+  height: 120px;
+}

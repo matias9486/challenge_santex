@@ -1,1 +1,51 @@
-<p>player-details-page works!</p>
+<div class="container">
+    <h2>Player Details</h2>
+    <hr>
+
+    @if (isLoading) {    
+        <app-spinner/>
+    }
+    <!--componente error-->    
+    @else if(error) {        
+        <app-alert [(message)]="error" [dismissible]="false"></app-alert>
+    }        
+    @else {
+        <div class=" container col-12 col-md-6 mb-3">
+            <div class="row bg-dark text-white rounded-top-5">
+                <div class="d-flex justify-content-center align-items-center py-2">
+                    <img [src]="player.playerFaceUrl" class="rounded-circle img-size" alt="error loading img"
+                        referrerpolicy="no-referrer">
+                    <h2 class="d-inline p-2">{{player.longName}}</h2>
+                </div>
+            </div>
+
+            <div class="row py-2 border">
+                <div class="chart-container ">
+                    <canvas #radarCanvas></canvas>
+                </div>
+            </div>
+
+            <div class="row bg-grey d-flex justify-content-center py-3 rounded-bottom-5">
+                <div class="col-6 d-flex justify-content-center">
+                    <div class="">
+                        <p><strong>Short Name</strong>: {{player.shortName}}</p>
+                        <p><strong>Nationality</strong>: {{player.nationalityName}}</p>
+                        <p><strong>Birth Date</strong>: {{player.birthDate}}</p>
+                        <p><strong>Preferred Foot</strong>: {{player.preferredFoot}}</p>
+                    </div>
+                </div>
+
+                <div class="col-6 d-flex justify-content-center">
+                    <div class="">
+                        <p><strong>Fifa Version</strong>: {{player.fifaVersion}}</p>
+                        <p><strong>Club</strong>: {{player.clubName}}</p>
+                        <p><strong>Position</strong>: {{player.playerPositions}}</p>
+                        <p><strong>Value Euros</strong>: {{player.valueEur}}</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    }
+    
+</div>
