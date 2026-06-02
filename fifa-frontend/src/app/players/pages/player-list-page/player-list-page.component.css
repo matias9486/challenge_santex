@@ -1,0 +1,8 @@
+.sm-size {
+    width: 40px;
+    height: 40px;
+}
+
+.table-hover tbody tr:hover {
+    --bs-table-hover-bg: var(--bs-primary-bg-subtle);
+}
