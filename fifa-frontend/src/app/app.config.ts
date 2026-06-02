@@ -1,5 +1,5 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
@@ -8,7 +8,7 @@ import { authInterceptor } from '@core/interceptors/auth.interceptor';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }), 
-    provideRouter(routes),
+    provideRouter(routes, withComponentInputBinding()), // vincula datos de rutas con @Input con mismo nombre
     provideHttpClient( // <-- Agregado para usar Http
       withFetch(), // Activa el uso de la Fetch API
       withInterceptors([ //agregado para usar interceptors propio        
@@ -17,3 +17,4 @@ export const appConfig: ApplicationConfig = {
     ),
   ]
 };
+
