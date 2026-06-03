@@ -1,0 +1,18 @@
+.btn-outline-principal {
+  background-color: transparent;
+  color: white; /* Tu color violeta para el texto */
+  border: 1px solid #9d48ff; /* Tu color violeta para el borde */
+  
+  /* Transición suave para el efecto Hover (idéntica a Bootstrap) */
+  transition: color 0.15s ease-in-out, 
+              background-color 0.15s ease-in-out, 
+              border-color 0.15s ease-in-out, 
+              box-shadow 0.15s ease-in-out;
+}
+
+/* Estado Hover (Cuando pasas el mouse por encima) */
+.btn-outline-principal:hover {
+  color: #ffffff; /* El texto se vuelve blanco */
+  background-color: #9d48ff; /* El fondo se llena de violeta */
+  border-color: #9d48ff; /* Mantiene el borde violeta */
+}
