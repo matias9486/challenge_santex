@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { AuthenticatedGuard } from '@core/guards/authenticated.guard';
 import { NotAuthenticatedGuard } from '@core/guards/non-authenticated.guard';
+import { HomeComponent } from './home/home.component';
 
 export const routes: Routes = [
     {
@@ -16,6 +17,10 @@ export const routes: Routes = [
         canMatch: [
             AuthenticatedGuard
         ],
-    }
+    },
     //ultimo iria el path vacio '' para la pagina principal
+    {
+        path: '', 
+        component: HomeComponent,        
+    },
 ];
