@@ -34,3 +34,56 @@
   background-color: #710de4; /* El fondo se llena de violeta */
   border-color: #710de4; /* Mantiene el borde violeta */
 }
+
+.btn-principal:disabled, 
+.btn-principal[disabled] {
+  background-color: #7f27ff !important;
+  border-color: #7f27ff !important;
+  color: #ffffff !important;
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/*Estilos para formularios*/
+.form-control:focus {
+  border-color: #7f27ff; /* Cambia el color del borde a violeta */
+  
+  /* Cambia el resplandor celeste por uno violeta.
+    El último valor (0.25rem) es el grosor y el 'rgba' le da transparencia 
+    para que se vea difuminado (estilo Bootstrap puro).
+  */
+  box-shadow: 0 0 0 0.25rem rgba(127, 39, 255, 0.25);
+  
+  /* Opcional: Si quieres que el texto interior mantenga un color firme al escribir */
+  color: #212529; 
+  background-color: #fff;
+}
+
+/* 1. Cambiar el color del botoncito (Thumb) */
+.form-range::-webkit-slider-thumb {
+  background-color: #9d48ff; /* Violeta en Chrome, Safari, Edge, Opera */
+}
+.form-range::-moz-range-thumb {
+  background-color: #9d48ff; /* Violeta en Firefox */
+}
+
+/* 2. Cambiar el color del botoncito cuando haces clic (Estado Active) */
+.form-range::-webkit-slider-thumb:active {
+  background-color: #5614bc; /* Un violeta más oscuro al presionarlo */
+}
+.form-range::-moz-range-thumb:active {
+  background-color: #5614bc;
+}
+
+/* 3. Cambiar el resplandor de foco alrededor del botoncito */
+.form-range:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 0 1px #fff, 0 0 0 0.25rem rgba(127, 39, 255, 0.25);
+}
+.form-range:focus::-moz-range-thumb {
+  box-shadow: 0 0 0 1px #fff, 0 0 0 0.25rem rgba(127, 39, 255, 0.25);
+}
+
+.form-select:focus {
+  border-color: #7f27ff; /* Borde violeta */
+  box-shadow: 0 0 0 0.25rem rgba(127, 39, 255, 0.25); /* Resplandor violeta */
+}
