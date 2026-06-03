@@ -1,6 +1,6 @@
 <div class="container">
     <h1>Login</h1>
-    <hr>
+    <hr class="text-principal opacity-75">
             
     <div class="d-flex justify-content-center align-items-center">        
         <form class="col-7 row g-3" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
@@ -25,10 +25,10 @@
             </div>
                     
             <div class="col-12">
-                <button type="submit" class="btn btn-primary">Log in</button>
+                <button type="submit" class="btn btn-principal">Log in</button>
             </div>
             <div class="col-12">
-                <p>Don't have an account yet? <a routerLink="/auth/register">Create one here.</a></p>
+                <p>Don't have an account yet? <a routerLink="/auth/register" class="text-principal">Create one here.</a></p>
             </div>
         </form>  
     </div>

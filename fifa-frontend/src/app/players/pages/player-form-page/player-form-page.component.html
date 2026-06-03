@@ -1,6 +1,6 @@
 <div class="container">
     <h2>{{title}}</h2>
-    <hr>
+    <hr class="text-principal opacity-75">
 
     @if (isLoading) {
         <app-spinner></app-spinner>
@@ -141,7 +141,7 @@
                 @if (messaggeBackend()) { 
                     <app-alert [(message)]="messaggeBackend" [dismissible]="true"></app-alert>        
                 } 
-            <button type="submit" class="btn btn-primary" [disabled]="isProcessing">{{isProcessing ? 'Processing...' : 'Save'}}</button>
+            <button type="submit" class="btn btn-principal" [disabled]="isProcessing">{{isProcessing ? 'Processing...' : 'Save'}}</button>
         </form>
     }
 </div>

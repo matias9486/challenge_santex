@@ -1,6 +1,6 @@
 <div class="container">
     <h1>Players</h1>
-    <hr>
+    <hr class="text-principal opacity-75">
     @if (isLoading) {
     <!-- 1. Mientras la petición está viajando -->
         <app-spinner/>
@@ -27,7 +27,7 @@
                     </div>
 
                     <div class="col-auto">
-                        <button type="submit" class="btn btn-primary mb-3">Filter</button>
+                        <button type="submit" class="btn btn-principal mb-3">Filter</button>
                     </div>    
                     <div class="col-auto">
                         <button type="button" class="btn bg-primary-subtle bg-gradient mb-3" (click)="onClearFilters()">Clean Filters</button>

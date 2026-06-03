@@ -4,5 +4,5 @@
 }
 
 .table-hover tbody tr:hover {
-    --bs-table-hover-bg: var(--bs-primary-bg-subtle);
+    --bs-table-hover-bg: #710de44b;
 }

@@ -1,6 +1,6 @@
 <div class="container">
     <h1>Register User</h1>
-    <hr>
+    <hr class="text-principal opacity-75">
             
     <div class="d-flex justify-content-center align-items-center">        
         <form class="col-7 row g-3" [formGroup]="registerForm" (ngSubmit)="onSubmit()">            
@@ -42,7 +42,7 @@
             </div>
 
             <div class="col-12">
-                <button type="submit" class="btn btn-primary" [disabled]="isProcessing">{{isProcessing ? 'Processing...' : 'Save'}}</button>
+                <button type="submit" class="btn btn-principal" [disabled]="isProcessing">{{isProcessing ? 'Processing...' : 'Save'}}</button>
             </div>            
         </form>  
     </div>
