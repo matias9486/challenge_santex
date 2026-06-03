@@ -1,1 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
+.text-shadow {
+    text-shadow: 6px 4px 4px rgba(0, 0, 0, 0.6);
+}
+
+.text-principal {
+    color: rgb(157, 72, 255);
+}
+
+/*clases para agregar opacidad*/
+.black-opacity { /*color negro semi transaparente*/
+    background-color: rgba(0, 0, 0, 0.9)!important; 
+}
+
+.black-opacity-2 { /*color negro semi transaparente*/
+    background-color: rgba(0, 0, 0, 0.5) !important;
+}
