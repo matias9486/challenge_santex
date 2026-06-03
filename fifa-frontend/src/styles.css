@@ -15,3 +15,22 @@
 .black-opacity-2 { /*color negro semi transaparente*/
     background-color: rgba(0, 0, 0, 0.5) !important;
 }
+
+.btn-principal {
+  background-color: #9d48ff;
+  color: white; /* Tu color violeta para el texto */
+  border: 1px solid #9d48ff; /* Tu color violeta para el borde */
+  
+  /* Transición suave para el efecto Hover (idéntica a Bootstrap) */
+  transition: color 0.15s ease-in-out, 
+              background-color 0.15s ease-in-out, 
+              border-color 0.15s ease-in-out, 
+              box-shadow 0.15s ease-in-out;
+}
+
+/* Estado Hover (Cuando pasas el mouse por encima) */
+.btn-principal:hover {
+  color: #ffffff; /* El texto se vuelve blanco */
+  background-color: #710de4; /* El fondo se llena de violeta */
+  border-color: #710de4; /* Mantiene el borde violeta */
+}
