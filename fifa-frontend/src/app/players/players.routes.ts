@@ -29,10 +29,12 @@ export const playerRoutes: Routes = [
             {
                 path: 'new',
                 component: PlayerFormPageComponent,
+                data: { mode: 'create' }, // El form de jugador lo usa
             },
             {
                 path: ':id/edit',
                 component: PlayerFormPageComponent,
+                data: { mode: 'edit' }, // El form de jugador lo usa
             },
             {
                 path: ':id',
