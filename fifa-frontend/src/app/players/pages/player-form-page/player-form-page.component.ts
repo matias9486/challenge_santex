@@ -20,8 +20,11 @@ import { Subscription } from 'rxjs';
 export class PlayerFormPageComponent implements OnInit{
 // PARA EDICION: obtiene el id de la ruta. Activar la opción withComponentInputBinding() en la configuración de enrutador.
   @Input({ transform: numberAttribute }) id!: number;
+  @Input() mode: 'create' | 'edit' = 'create';
+
   isEditMode = false;
   isLoading = false;
+  hasLoadError = false;
 
   // Inyección moderna del Router de Angular
   private router = inject(Router);
@@ -35,25 +38,41 @@ export class PlayerFormPageComponent implements OnInit{
   // Definimos rta back como un Signal.. lo usamos como two way data binding en el componente alert-message. 
   // Desde alla, le cambio estado al cerrar alert. Por eso le paso el signal entero(sin parentesis)
   // Empieza en 'null' para que la alerta no se muestre hasta que ocurra un evento (ej. un clic o un error).
-  messaggeBackend = signal< AlertData | null>(null);
-  title = "Player Create";
+  messaggeBackend = signal< AlertData | null>(null);  
   player!: Player;
   playerForm!: FormGroup;
 
   readonly positions = PLAYER_POSITIONS;
-  // 1. Definimos las listas de campos para iterar
-  //readonly skillFields = ['overall', 'potential', 'pace', 'shooting', 'passing', 'dribbling', 'defending', 'physic'];
+  //Definimos las listas de campos para iterar
   readonly skillFields = SKILL_FIELDS;
 
   ngOnInit(): void {
-    this.isEditMode = !!this.id; // Si hay ID, es edición
+    // 1. Si el modo es crear, ignoramos cualquier ID y cargamos el formulario
+    if (this.mode === 'create') {
+      this.isEditMode = false;    
+      this.initForm();
+      return;
+    }
+      
+    if (this.id !== undefined && (isNaN(this.id) || this.id === 0)) {      
+        this.isEditMode = true;
+        this.hasLoadError = true;
+        this.messaggeBackend.set({
+          statusCode: 400,
+          message: 'Player ID is not valid.',
+          statusName: 'Bad Request',
+          type: 'danger'
+        });
+        return;
+    }
+
+    this.isEditMode = !!this.id;
     this.initForm();
 
-    if (this.isEditMode && this.id) {
-      this.title = "Player Edit";
+    if (this.isEditMode && this.id) {      
       this.isLoading = true;
       this.playerService.getPlayerById(this.id).subscribe({
-        next: (player) => {
+        next: (player) => {          
           // 1. Cargamos todos los valores en el formulario
           this.playerForm.patchValue(player);
 
@@ -62,7 +81,7 @@ export class PlayerFormPageComponent implements OnInit{
           this.playerForm.get('playerId')?.disable();
           this.isLoading = false;
         },
-        error: (err) => {            
+        error: (err) => {                 
             let message: string | string [] = err.error.message || 'Unknown Error';
             this.messaggeBackend.set({
               statusCode: err.error.statusCode,
@@ -71,6 +90,7 @@ export class PlayerFormPageComponent implements OnInit{
               type: 'danger'            
             });                      
             this.isLoading = false;
+            this.hasLoadError = true;
         },
         complete: () => {
           this.isLoading = false;
@@ -133,7 +153,7 @@ export class PlayerFormPageComponent implements OnInit{
       this.messaggeBackend.set({
             statusCode: 0,
             message: 'Check form fields', 
-            statusName: 'Invalid Form', // El nombre del estado (ej. "Not Found", "Internal Server Error")
+            statusName: 'Invalid Form',
             type: 'danger'
       });      
       return;

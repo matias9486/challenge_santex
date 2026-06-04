@@ -1,11 +1,11 @@
 <div class="container">
-    <h2>{{title}}</h2>
+    <h2>{{isEditMode ? 'Edit Player' : 'Create Player'}}</h2>
     <hr class="text-principal opacity-75">
 
     @if (isLoading) {
         <app-spinner></app-spinner>
     }
-    @else if(messaggeBackend()){
+    @else if(hasLoadError){
         <app-alert [(message)]="messaggeBackend" [dismissible]="false"></app-alert>
     }
     @else {
