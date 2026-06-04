@@ -21,10 +21,9 @@ import { AuthModule } from './auth/auth.module';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_DATABASENAME'),
-        //entities: [],
         autoLoadEntities: true, //Permite que cada entidad que definas en tus módulos (ej. users.entity.ts) se registre automáticamente sin tener que listarlas manualmente aquí
         synchronize: true,
-        dropSchema: true, // <-- Esto borrará TODO y lo volverá a crear limpiamente en cada restart
+        dropSchema: false,
       }),
     }),
     PlayerModule,
