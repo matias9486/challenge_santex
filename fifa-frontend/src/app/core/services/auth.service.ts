@@ -3,13 +3,12 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { NO_TOKEN_REQUIRED } from '@core/context/auth.context';
-import { environment } from '@environments/environment.development';
 import { AuthUser } from '@core/models/auth-user.interface';
 import { AuthResponse } from '@core/models/auth-response.interface';
 
 
 type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
-const baseUrl = environment.baseUrl;
+const baseUrl = 'http://localhost:3000/api';
 
 @Injectable({
   providedIn: 'root'

@@ -1,6 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { environment } from '@environments/environment.development';
 import { FilterPlayer, PaginatedPlayers, Player } from '@players/interfaces';
 import { Observable } from 'rxjs';
 
@@ -8,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class PlayerService {
-  private baseUrl = environment.baseUrl;
+  private baseUrl = 'http://localhost:3000/api';
   
   private http = inject(HttpClient);
   
