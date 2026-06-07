@@ -28,5 +28,10 @@ Ingresar la siguiente URL en el navegador para ejecutar el seed y ver documentac
 ## Frontend
 Ingresar la siguiente URL en el navegador para probar la aplicación: http://localhost:4200/
 Usuario predefinido al ejecutar seed:
+```
   "email": "matias@gmail.com",
   "password": "Matias1234"
+```
+
+## Sobre el backend y frontend
+https://docs.google.com/document/d/12PD7PiDLasJQluxVoDVmLdZM_vs72uv5O52eP7EtUIk/edit?usp=sharing
